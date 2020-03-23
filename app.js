@@ -12,6 +12,11 @@ app.get("/health", (req, res) => {
 app.post("/descritiva", (req, res) => {
     let body = req.body;
     let dados = body.dados.toLowerCase().split(";");
+    let vetAux = [];
+    dados.forEach(element => {
+        vetAux.push(element.trim())
+    });
+    dados = vetAux;
     dados.sort();
     let json = {
         tipo: "",
