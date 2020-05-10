@@ -1,6 +1,7 @@
 var express = require('express');
 var cors = require('cors');
 var app = express();
+var { quickSort } = require('./sorting')
 
 app.use(cors());
 app.use(express.json());
@@ -11,13 +12,16 @@ app.get("/health", (req, res) => {
 
 app.post("/descritiva", (req, res) => {
     let body = req.body;
-    let dados = body.dados.toLowerCase().split(";");
+    body.dados = body.dados.toLowerCase().split(",").join('.'); 
+    let dados = body.dados.split(";");
     let vetAux = [];
     dados.forEach(element => {
         vetAux.push(element.trim())
     });
     dados = vetAux;
-    dados.sort();
+    // dados.sort();
+    quickSort(dados)
+    // console.log(quickSort(dados))
     let json = {
         tipo: "",
         variavel: body.nomeVariavel,
