@@ -16,12 +16,18 @@ app.post("/descritiva", (req, res) => {
     let dados = body.dados.split(";");
     let vetAux = [];
     dados.forEach(element => {
-        vetAux.push(element.trim())
+        if(isNaN(element)){
+            vetAux.push(element.trim())
+        } else {
+            vetAux.push(Number(element))
+        }
     });
     dados = vetAux;
-    // dados.sort();
+    console.log('1.0', dados)
     quickSort(dados)
-    // console.log(quickSort(dados))
+
+    console.log('1.1', dados)
+
     let json = {
         tipo: "",
         variavel: body.nomeVariavel,
@@ -46,11 +52,6 @@ app.post("/descritiva", (req, res) => {
     }
     else {
         //Se for um número, será quantitativa
-        let vetAux = [];
-        dados.forEach(element => {
-            vetAux.push(Number(element))
-        });
-        dados = vetAux;
         let dadosDistintos = [...new Set(dados)];
         if (dadosDistintos.length <= 6) {
             // Será quantitativa discreta
@@ -76,6 +77,12 @@ app.post("/descritiva", (req, res) => {
             let constante = Math.round(1 + 3.3 * Math.log10(dados.length));
             let intervaloClasses = Math.ceil(amplitude / constante)
 
+            console.log('const', constante)
+            console.log('amplitude', amplitude)
+            console.log('intervaloClasses', intervaloClasses)
+            console.log('ampldadositude', dados)
+           
+
             for (let i = 0; i < constante; i++) {
                 let contador = 0
                 dados.forEach(element => {
@@ -94,6 +101,7 @@ app.post("/descritiva", (req, res) => {
             }
         }
     }
+    console.log('json', json)
     res.send(json)
 })
 
