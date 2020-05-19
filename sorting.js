@@ -104,10 +104,9 @@ function mediana(tipo, dados) {
 			if (posicao >= total && posicao <= total + Number(dados[index].value)) {
 				intervaloClasse = dados[index];
 				break;
-			} else {
-				Fac += Number(dados[index].value);
-				total += Number(dados[index].value);
 			}
+			Fac += Number(dados[index].value);
+			total += Number(dados[index].value);
 		}
 		let limites = intervaloClasse.name.split("|--");
 		let mediana = Number(limites[0]) + ((posicao - Fac) / intervaloClasse.value) * Number(limites[1] - Number(limites[0]));
@@ -115,11 +114,34 @@ function mediana(tipo, dados) {
 	}
 }
 
-// function medidasSeparatriz(tipo, dados, divisor)
+function medidasSeparatriz(tipo, dados, medida, parte) {
+	if (tipo != "quantitativaContinua") {
+		let total = 0;
+		dados.forEach((item) => {
+			total += item.value;
+		});
+		let porcetagem = (100 / medida) * parte;
+		let posicao = Math.round((porcetagem * total) / 100);
+		let Fac = 0;
+		let intervaloClasse = {};
+		for (let index = 0; index < dados.length; index++) {
+			if (posicao >= Fac && posicao <= Fac + Number(dados[index].value)) {
+				intervaloClasse = dados[index];
+				break;
+			}
+			Fac += Number(dados[index].value);
+		}
+		return "Medida Separatriz: " + intervaloClasse.name;
+	}
+	if (tipo != "quantitativaContinua") {
+		return "teste";
+	}
+}
 
 module.exports = {
 	quickSort,
 	media,
 	moda,
 	mediana,
+	medidasSeparatriz,
 };

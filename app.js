@@ -1,7 +1,7 @@
 var express = require("express");
 var cors = require("cors");
 var app = express();
-var { quickSort, media, moda, mediana } = require("./sorting");
+var { quickSort, media, moda, mediana, medidasSeparatriz } = require("./sorting");
 
 app.use(cors());
 app.use(express.json());
@@ -19,9 +19,30 @@ app.post("/mediana", (req, res) => {
 
 app.post("/quartil/:id", (req, res) => {
 	let body = req.body;
-	let quartil = req.params.id;
-	console.log("req", quartil, body);
-	res.send("teste");
+	let quartil = Number(req.params.id);
+	const resultado = medidasSeparatriz(body.tipo, body.dados, 4, quartil);
+	res.send(resultado);
+});
+
+app.post("/quintil/:id", (req, res) => {
+	let body = req.body;
+	let quintil = Number(req.params.id);
+	const resultado = medidasSeparatriz(body.tipo, body.dados, 5, quintil);
+	res.send(resultado);
+});
+
+app.post("/decil/:id", (req, res) => {
+	let body = req.body;
+	let decil = Number(req.params.id);
+	const resultado = medidasSeparatriz(body.tipo, body.dados, 10, decil);
+	res.send(resultado);
+});
+
+app.post("/porcentil/:id", (req, res) => {
+	let body = req.body;
+	let porcentil = Number(req.params.id);
+	const resultado = medidasSeparatriz(body.tipo, body.dados, 100, porcentil);
+	res.send(resultado);
 });
 
 app.post("/descritiva", (req, res) => {
