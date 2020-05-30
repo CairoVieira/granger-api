@@ -134,9 +134,42 @@ function medidasSeparatriz(tipo, dados, medida, parte) {
 	if (tipo == "quantitativaContinua") {
 		let limites = intervaloClasse.name.split("|--");
 		let resultado = Number(limites[0]) + ((posicao - Fac) / intervaloClasse.value) * Number(limites[1] - Number(limites[0]));
-		return "Medida Separatriz: " + resultado.toFixed(2);
+		return resultado.toFixed(2);
 	}
-	return "Medida Separatriz: " + intervaloClasse.name;
+	return intervaloClasse.name;
+}
+
+function desvioPadrao(tipo, amostraPopulacao, dados) {
+	let media = 0;
+	let total = 0;
+	if (tipo != "quantitativaContinua") {
+		dados.forEach((element) => {
+			media += Number(element.name) * Number(element.value);
+			total += Number(element.value);
+		});
+		media = media / total;
+		let somatorio = 0;
+		dados.forEach((item) => {
+			somatorio += (item.name - media) ** 2 * item.value;
+		});
+		let desvio = Math.sqrt(somatorio / (total - amostraPopulacao));
+		return `Desvio Padrão: ${desvio.toFixed(2)} - Coeficiente de Variação: ${((desvio / media) * 100).toFixed(2)}%`;
+	}
+
+	dados.forEach((element) => {
+		let xi = element.name.split("|--");
+		media += ((Number(xi[0]) + Number(xi[1])) / 2) * element.value;
+		total += Number(element.value);
+	});
+	media = media / total;
+	let somatorio = 0;
+	dados.forEach((item) => {
+		let xi = item.name.split("|--");
+		xi = (Number(xi[0]) + Number(xi[1])) / 2;
+		somatorio += (xi - media) ** 2 * item.value;
+	});
+	let desvio = Math.sqrt(somatorio / (total - amostraPopulacao));
+	return `Desvio Padrão: ${desvio.toFixed(2)} - Coeficiente de Variação: ${((desvio / media) * 100).toFixed(2)}%`;
 }
 
 module.exports = {
@@ -145,4 +178,5 @@ module.exports = {
 	moda,
 	mediana,
 	medidasSeparatriz,
+	desvioPadrao,
 };

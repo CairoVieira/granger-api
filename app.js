@@ -1,7 +1,7 @@
 var express = require("express");
 var cors = require("cors");
 var app = express();
-var { quickSort, media, moda, mediana, medidasSeparatriz } = require("./sorting");
+var { quickSort, media, moda, mediana, medidasSeparatriz, desvioPadrao } = require("./funcoes");
 
 app.use(cors());
 app.use(express.json());
@@ -20,8 +20,10 @@ app.post("/mediana", (req, res) => {
 app.post("/quartil/:id", (req, res) => {
 	let body = req.body;
 	let quartil = Number(req.params.id);
+	console.log("1.0", body, quartil);
 	const resultado = medidasSeparatriz(body.tipo, body.dados, 4, quartil);
-	res.send(resultado);
+	console.log("1.1", resultado);
+	res.send(resultado.toString());
 });
 
 app.post("/quintil/:id", (req, res) => {
@@ -109,8 +111,54 @@ app.post("/descritiva", (req, res) => {
 			json.media = media(json.tipo, json.dados).trim();
 			json.moda = moda(json.tipo, json.dados).trim();
 			json.mediana = mediana(json.tipo, dados).trim();
+			json.desvio = desvioPadrao(json.tipo, body.amostra === true ? 1 : 0, json.dados);
 		} else {
 			//será quantitativa contínua
+			json.tipo = "quantitativaContinua";
+			let menor = dados[0];
+			let maior = dados[dados.length - 1];
+			let amplitude = maior - menor;
+			let constante = Math.sqrt(dados.length);
+
+			let k = [Math.trunc(constante - 1), Math.trunc(constante), Math.trunc(constante + 1)];
+
+			let linhas;
+			let isNotMultiple = true;
+			while (isNotMultiple) {
+				amplitude += 1;
+				for (let i = 0; i < k.length; i++) {
+					if (amplitude % k[i] == 0) {
+						isNotMultiple = false;
+						linhas = k[i];
+						break;
+					}
+				}
+			}
+
+			let intervaloClasses = amplitude / linhas;
+
+			for (let i = 0; i < linhas; i++) {
+				let contador = 0;
+				dados.forEach((element) => {
+					if (element >= menor && element < menor + intervaloClasses) {
+						contador += 1;
+					}
+				});
+				let intervalo = menor + " |-- " + (menor + intervaloClasses);
+				menor = intervaloClasses + menor;
+				let obj = {
+					name: intervalo,
+					value: contador,
+					fr: Math.round((100 * contador) / dados.length),
+				};
+				json.dados.push(obj);
+			}
+			json.media = media(json.tipo, json.dados).trim();
+			json.moda = moda(json.tipo, json.dados).trim();
+			json.mediana = mediana(json.tipo, json.dados).trim();
+			json.desvio = desvioPadrao(json.tipo, body.amostra === true ? 1 : 0, json.dados);
+
+			/** STURGES
 			json.tipo = "quantitativaContinua";
 			let menor = dados[0];
 			let maior = dados[dados.length - 1];
@@ -137,6 +185,8 @@ app.post("/descritiva", (req, res) => {
 			json.media = media(json.tipo, json.dados).trim();
 			json.moda = moda(json.tipo, json.dados).trim();
 			json.mediana = mediana(json.tipo, json.dados).trim();
+			json.desvio = desvioPadrao(json.tipo, body.amostra === true ? 1 : 0, json.dados);
+			**/
 		}
 	}
 	console.log("json", json);
