@@ -30,21 +30,21 @@ app.post("/quintil/:id", (req, res) => {
 	let body = req.body;
 	let quintil = Number(req.params.id);
 	const resultado = medidasSeparatriz(body.tipo, body.dados, 5, quintil);
-	res.send(resultado);
+	res.send(resultado.toString());
 });
 
 app.post("/decil/:id", (req, res) => {
 	let body = req.body;
 	let decil = Number(req.params.id);
 	const resultado = medidasSeparatriz(body.tipo, body.dados, 10, decil);
-	res.send(resultado);
+	res.send(resultado.toString());
 });
 
 app.post("/porcentil/:id", (req, res) => {
 	let body = req.body;
 	let porcentil = Number(req.params.id);
 	const resultado = medidasSeparatriz(body.tipo, body.dados, 100, porcentil);
-	res.send(resultado);
+	res.send(resultado.toString());
 });
 
 app.post("/descritiva", (req, res) => {
