@@ -172,6 +172,34 @@ function desvioPadrao(tipo, amostraPopulacao, dados) {
 	return `Desvio Padrão: ${desvio.toFixed(2)} - Coeficiente de Variação: ${((desvio / media) * 100).toFixed(2)}%`;
 }
 
+function fatorial(numero) {
+	if (numero == 0) return 1;
+	if (numero != 1) return numero * fatorial(numero - 1);
+	return Number(numero);
+}
+
+function analiseCombinatoria(n, k) {
+	return Number(fatorial(n) / (fatorial(n - k) * fatorial(k)));
+}
+
+function distribuicaoBinomial(n, p, q, k, tipo) {
+	if (tipo == "maior") {
+		let total = 0;
+		for (let index = k; index <= n; index++) {
+			total += Number(analiseCombinatoria(n, index) * Math.pow(p, index) * Math.pow(q, n - index) * 100);
+		}
+		return total.toFixed(2);
+	}
+	if (tipo == "menor") {
+		let total = 0;
+		for (let index = 0; index < k; index++) {
+			total += Number(analiseCombinatoria(n, index) * Math.pow(p, index) * Math.pow(q, n - index) * 100);
+		}
+		return total.toFixed(2);
+	}
+	return Number(analiseCombinatoria(n, k) * Math.pow(p, k) * Math.pow(q, n - k) * 100).toFixed(2);
+}
+
 module.exports = {
 	quickSort,
 	media,
@@ -179,4 +207,7 @@ module.exports = {
 	mediana,
 	medidasSeparatriz,
 	desvioPadrao,
+	fatorial,
+	analiseCombinatoria,
+	distribuicaoBinomial,
 };

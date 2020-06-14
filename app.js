@@ -1,7 +1,7 @@
 var express = require("express");
 var cors = require("cors");
 var app = express();
-var { quickSort, media, moda, mediana, medidasSeparatriz, desvioPadrao } = require("./funcoes");
+var { quickSort, media, moda, mediana, medidasSeparatriz, desvioPadrao, distribuicaoBinomial } = require("./funcoes");
 
 app.use(cors());
 app.use(express.json());
@@ -14,7 +14,7 @@ app.post("/mediana", (req, res) => {
 	let body = req.body;
 	let resultado = "";
 	resultado = mediana(body.tipo, body.dados);
-	res.send(resultado);
+	res.send(resultado.toString());
 });
 
 app.post("/quartil/:id", (req, res) => {
@@ -189,7 +189,17 @@ app.post("/descritiva", (req, res) => {
 			**/
 		}
 	}
-	console.log("json", json);
+	res.send(json);
+});
+
+app.post("/probabilidade", (req, res) => {
+	let body = req.body;
+	let resultado = distribuicaoBinomial(Number(body.n), Number(body.p), Number(body.q), Number(body.k), body.tipo);
+	let json = {
+		dados: {
+			resultado,
+		},
+	};
 	res.send(json);
 });
 
