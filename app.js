@@ -1,7 +1,19 @@
 var express = require("express");
 var cors = require("cors");
 var app = express();
-var { quickSort, media, moda, mediana, medidasSeparatriz, desvioPadrao, distribuicaoBinomial } = require("./funcoes");
+var {
+	quickSort,
+	media,
+	moda,
+	mediana,
+	medidasSeparatriz,
+	desvioPadrao,
+	distribuicaoBinomial,
+	distribuicaoNormal,
+	mediaBinomial,
+	desvioPadraoBinomial,
+	coeficienteVariacaoBinomial,
+} = require("./funcoes");
 
 app.use(cors());
 app.use(express.json());
@@ -192,9 +204,26 @@ app.post("/descritiva", (req, res) => {
 	res.send(json);
 });
 
-app.post("/probabilidade", (req, res) => {
+app.post("/probabilidade/binomial", (req, res) => {
 	let body = req.body;
 	let resultado = distribuicaoBinomial(Number(body.n), Number(body.p), Number(body.q), Number(body.k), body.tipo);
+	let media = mediaBinomial(Number(body.n), Number(body.p));
+	let desvio = desvioPadraoBinomial(Number(body.n), Number(body.p), Number(body.q));
+	let coeficiente = coeficienteVariacaoBinomial(desvio, media);
+	let json = {
+		dados: {
+			resultado,
+			media,
+			desvio,
+			coeficiente,
+		},
+	};
+	res.send(json);
+});
+
+app.post("/probabilidade/normal", (req, res) => {
+	let body = req.body;
+	let resultado = distribuicaoNormal(Number(body.media), Number(body.desvio), Number(body.valor), body.intervalo, Number(body.de), Number(body.para));
 	let json = {
 		dados: {
 			resultado,

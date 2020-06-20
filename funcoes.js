@@ -1,3 +1,5 @@
+const tabelaZ = require("./z-score-table.js");
+
 function troca(vet, i, j) {
 	let aux = vet[i];
 	vet[i] = vet[j];
@@ -200,6 +202,74 @@ function distribuicaoBinomial(n, p, q, k, tipo) {
 	return Number(analiseCombinatoria(n, k) * Math.pow(p, k) * Math.pow(q, n - k) * 100).toFixed(2);
 }
 
+function mediaBinomial(n, p) {
+	return (n * p).toFixed(2);
+}
+
+function desvioPadraoBinomial(n, p, q) {
+	return Math.sqrt(n * p * q).toFixed(2);
+}
+
+function coeficienteVariacaoBinomial(desvio, media) {
+	return ((desvio / media) * 100).toFixed(2);
+}
+
+function zscore(media, desvio, valor) {
+	let score = (valor - media) / desvio;
+	return Math.round((score + Number.EPSILON) * 100) / 100;
+}
+
+function buscaBinaria(valor, vetor) {
+	let primeiro = 0;
+	let ultimo = vetor.length - 1;
+	let match = false;
+	let meio = 0;
+
+	while (primeiro <= ultimo && !match) {
+		meio = Math.ceil((primeiro + ultimo) / 2);
+		if (vetor[meio] == valor) {
+			match = true;
+		} else {
+			if (valor < vetor[meio]) {
+				ultimo = meio - 1;
+			} else {
+				primeiro = meio + 1;
+			}
+		}
+	}
+	return meio;
+}
+
+function retornaArea(media, desvio, valor) {
+	const score = Math.abs(zscore(media, desvio, valor));
+	const numeroLin = Math.trunc(score * 10) / 10;
+	const numeroCol = Math.round((score - numeroLin + Number.EPSILON) * 100) / 100;
+	const indiceColuna = buscaBinaria(numeroCol, tabelaZ.coluna);
+	const indiceLinha = buscaBinaria(numeroLin, tabelaZ.linha);
+	const area = tabelaZ.resultado[indiceLinha][indiceColuna];
+	return area;
+}
+
+function distribuicaoNormal(media, desvio, valor, intervalo, de, ate) {
+	if (intervalo == "entre") {
+		const area1 = retornaArea(media, desvio, de);
+		const area2 = retornaArea(media, desvio, ate);
+
+		if (de < media && ate < media) {
+			return Math.abs((area1 - area2) * 100).toFixed(2);
+		}
+		if (de > media && ate > media) {
+			return Math.abs((area2 - area1) * 100).toFixed(2);
+		}
+		return ((area1 + area2) * 100).toFixed(2);
+	} else {
+		const area = retornaArea(media, desvio, valor);
+		if ((valor < media && intervalo == "maior") || (valor > media && intervalo == "menor")) return ((0.5 + area) * 100).toFixed(2);
+
+		return ((0.5 - area) * 100).toFixed(2);
+	}
+}
+
 module.exports = {
 	quickSort,
 	media,
@@ -210,4 +280,8 @@ module.exports = {
 	fatorial,
 	analiseCombinatoria,
 	distribuicaoBinomial,
+	mediaBinomial,
+	desvioPadraoBinomial,
+	coeficienteVariacaoBinomial,
+	distribuicaoNormal,
 };
