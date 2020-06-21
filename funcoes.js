@@ -270,6 +270,20 @@ function distribuicaoNormal(media, desvio, valor, intervalo, de, ate) {
 	}
 }
 
+function distribuicaoUniforme(minimo, maximo, valor, intervalo, de, ate) {
+	if (intervalo == "entre") {
+		return ((1 / (maximo - minimo)) * (ate - de) * 100).toFixed(2);
+	}
+	if (intervalo == "maior") {
+		return ((1 / (maximo - minimo)) * (maximo - valor) * 100).toFixed(2);
+	}
+	return ((1 / (maximo - minimo)) * (valor - minimo) * 100).toFixed(2);
+}
+
+function desvioPadraoUniforme(minimo, maximo) {
+	return Math.sqrt((maximo - minimo) ** 2 / 12).toFixed(2);
+}
+
 module.exports = {
 	quickSort,
 	media,
@@ -284,4 +298,6 @@ module.exports = {
 	desvioPadraoBinomial,
 	coeficienteVariacaoBinomial,
 	distribuicaoNormal,
+	desvioPadraoUniforme,
+	distribuicaoUniforme,
 };

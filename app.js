@@ -13,6 +13,8 @@ var {
 	mediaBinomial,
 	desvioPadraoBinomial,
 	coeficienteVariacaoBinomial,
+	desvioPadraoUniforme,
+	distribuicaoUniforme,
 } = require("./funcoes");
 
 app.use(cors());
@@ -232,6 +234,22 @@ app.post("/probabilidade/normal", (req, res) => {
 	res.send(json);
 });
 
+app.post("/probabilidade/uniforme", (req, res) => {
+	let body = req.body;
+	const resultado = distribuicaoUniforme(Number(body.minimo), Number(body.maximo), Number(body.valor), body.intervalo, Number(body.de), Number(body.ate));
+	const media = ((Number(body.minimo) + Number(body.maximo)) / 2).toFixed(2);
+	const desvio = desvioPadraoUniforme(Number(body.minimo), Number(body.maximo));
+	const coeficiente = ((desvio / media) * 100).toFixed(2);
+	let json = {
+		dados: {
+			resultado,
+			media,
+			desvio,
+			coeficiente,
+		},
+	};
+	res.send(json);
+});
 var port = process.env.PORT || 3001;
 app.listen(port, function () {
 	console.log("API Granger online na porta %s", port);
