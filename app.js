@@ -15,6 +15,12 @@ var {
 	coeficienteVariacaoBinomial,
 	desvioPadraoUniforme,
 	distribuicaoUniforme,
+	correlacao,
+	correlacaoGrafico,
+	regressao,
+	tipoCorrelacao,
+	autenticarUsuario,
+	cadastrarUsuario,
 } = require("./funcoes");
 
 app.use(cors());
@@ -250,6 +256,44 @@ app.post("/probabilidade/uniforme", (req, res) => {
 	};
 	res.send(json);
 });
+
+app.post("/correlacao", (req, res) => {
+	const x = req.body.x.split(";");
+	const y = req.body.y.split(";");
+	const correlacaoResultado = correlacao(x, y);
+	const tipo = tipoCorrelacao(correlacaoResultado);
+	const regressaoResultado = regressao(x, y);
+	const dadosGrafico = correlacaoGrafico(x, y, regressaoResultado);
+	const json = {
+		dados: {
+			correlacaoResultado,
+			dadosGrafico,
+			regressaoResultado,
+			tipo,
+		},
+	};
+	res.send(json);
+});
+
+app.post("/login", (req, res) => {
+	const email = req.body.email;
+	const senha = req.body.senha;
+
+	const usuario = autenticarUsuario(email, senha);
+	if (!usuario) res.send("Usuário não cadstrado!");
+	else res.send(usuario);
+});
+
+app.post("/cadastrar", (req, res) => {
+	const email = req.body.email;
+	const senha = req.body.senha;
+	const nome = req.body.nome;
+
+	const usuario = cadastrarUsuario(nome, email, senha);
+	if (!usuario) res.send("Usuário não cadstrado!");
+	else res.send(usuario);
+});
+
 var port = process.env.PORT || 3001;
 app.listen(port, function () {
 	console.log("API Granger online na porta %s", port);

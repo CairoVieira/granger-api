@@ -1,4 +1,5 @@
 const tabelaZ = require("./z-score-table.js");
+const fs = require("fs");
 
 function troca(vet, i, j) {
 	let aux = vet[i];
@@ -284,6 +285,115 @@ function desvioPadraoUniforme(minimo, maximo) {
 	return Math.sqrt((maximo - minimo) ** 2 / 12).toFixed(2);
 }
 
+function correlacao(x, y) {
+	let somatorioX = 0;
+	let somatorioY = 0;
+	let somatorioXY = 0;
+	let somatorioX2 = 0;
+	let somatorioY2 = 0;
+
+	for (let i = 0; i < x.length; i++) {
+		const elementX = Number(x[i]);
+		const elementY = Number(y[i]);
+
+		somatorioX += elementX;
+		somatorioY += elementY;
+		somatorioXY += elementX * elementY;
+		somatorioX2 += elementX * elementX;
+		somatorioY2 += elementY * elementY;
+	}
+	const n = x.length;
+	const divisor = n * somatorioXY - somatorioX * somatorioY;
+	const dividendo = Math.sqrt(n * somatorioX2 - Math.pow(somatorioX, 2)) * Math.sqrt(n * somatorioY2 - Math.pow(somatorioY, 2));
+	const resultado = divisor / dividendo;
+	return (resultado * 100).toFixed(2);
+}
+
+function regressao(x, y) {
+	let somatorioX = 0;
+	let somatorioY = 0;
+	let somatorioXY = 0;
+	let somatorioX2 = 0;
+	let somatorioY2 = 0;
+
+	for (let i = 0; i < x.length; i++) {
+		const elementX = Number(x[i]);
+		const elementY = Number(y[i]);
+
+		somatorioX += elementX;
+		somatorioY += elementY;
+		somatorioXY += elementX * elementY;
+		somatorioX2 += elementX * elementX;
+		somatorioY2 += elementY * elementY;
+	}
+
+	const n = x.length;
+	const divisor = n * somatorioXY - somatorioX * somatorioY;
+	const dividendo = n * somatorioX2 - Math.pow(somatorioX, 2);
+	const a = (divisor / dividendo).toFixed(2);
+	const b = (somatorioY / n - a * (somatorioX / n)).toFixed(2);
+	return { a, b };
+}
+
+function correlacaoGrafico(x, y, regressao) {
+	let resultado = [];
+
+	for (let i = 0; i < x.length; i++) {
+		const elementX = Number(x[i]);
+		const elementY = Number(y[i]);
+
+		let item = {
+			x: elementX,
+			y: elementY,
+		};
+		if (i == 0 || i == x.length - 1) {
+			const linha = Number(regressao.a) * elementX + Number(regressao.b);
+			item.l = linha;
+		}
+		resultado.push(item);
+	}
+	return resultado;
+}
+
+function tipoCorrelacao(correlacao) {
+	if (Number(correlacao) == 0) return "Variáveis não correlacionadas";
+	if (Number(correlacao) <= 30) return "Fraca";
+	if (Number(correlacao) <= 70 && Number(correlacao) > 30) return "Moderada";
+	if (Number(correlacao) == 100) return "Perfeita";
+	return "Forte";
+}
+
+function autenticarUsuario(email, senha) {
+	const dados = load();
+	const isUserLogged = dados.filter((u) => u.email == email && u.senha == senha);
+	console.log(isUserLogged);
+
+	return isUserLogged[0];
+}
+
+function cadastrarUsuario(nome, email, senha) {
+	const dados = load();
+	const user = {
+		nome,
+		email,
+		senha,
+	};
+	dados.push(user);
+	save(dados);
+
+	return autenticarUsuario(email, senha);
+}
+
+function save(content) {
+	const contentString = JSON.stringify(content);
+	return fs.writeFileSync("login.txt", contentString);
+}
+function load() {
+	const fileBuffer = fs.readFileSync("login.txt", "utf-8");
+	const json = JSON.parse(fileBuffer);
+	return json;
+}
+
 module.exports = {
 	quickSort,
 	media,
@@ -300,4 +410,10 @@ module.exports = {
 	distribuicaoNormal,
 	desvioPadraoUniforme,
 	distribuicaoUniforme,
+	correlacao,
+	correlacaoGrafico,
+	regressao,
+	tipoCorrelacao,
+	autenticarUsuario,
+	cadastrarUsuario,
 };
