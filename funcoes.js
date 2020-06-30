@@ -182,6 +182,7 @@ function fatorial(numero) {
 }
 
 function analiseCombinatoria(n, k) {
+	if(k == 0) return 1;
 	return Number(fatorial(n) / (fatorial(n - k) * fatorial(k)));
 }
 
