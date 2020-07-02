@@ -1,5 +1,6 @@
 const tabelaZ = require("./z-score-table.js");
 const fs = require("fs");
+const nodemailer = require('nodemailer');
 
 function troca(vet, i, j) {
 	let aux = vet[i];
@@ -182,26 +183,18 @@ function fatorial(numero) {
 }
 
 function analiseCombinatoria(n, k) {
-	if(k == 0) return 1;
-	return Number(fatorial(n) / (fatorial(n - k) * fatorial(k)));
+	if (k == 0) return 1;
+	return Number( (fatorial(n) / (fatorial(n - k) * fatorial(k)) .toFixed(2)) );
 }
 
 function distribuicaoBinomial(n, p, q, k, tipo) {
-	if (tipo == "maior") {
-		let total = 0;
-		for (let index = k; index <= n; index++) {
-			total += Number(analiseCombinatoria(n, index) * Math.pow(p, index) * Math.pow(q, n - index) * 100);
-		}
-		return total.toFixed(2);
+	const arrayK = k.split(";")
+	let total = 0;
+	for (let index = 0; index < arrayK.length; index++) {
+		const element = Number(arrayK[index]);
+		total += Number(analiseCombinatoria(n, element) * Math.pow(p, element) * Math.pow(q, n - element) * 100);
 	}
-	if (tipo == "menor") {
-		let total = 0;
-		for (let index = 0; index < k; index++) {
-			total += Number(analiseCombinatoria(n, index) * Math.pow(p, index) * Math.pow(q, n - index) * 100);
-		}
-		return total.toFixed(2);
-	}
-	return Number(analiseCombinatoria(n, k) * Math.pow(p, k) * Math.pow(q, n - k) * 100).toFixed(2);
+	return total.toFixed(2);
 }
 
 function mediaBinomial(n, p) {
@@ -366,33 +359,87 @@ function tipoCorrelacao(correlacao) {
 
 function autenticarUsuario(email, senha) {
 	const dados = load();
-	const isUserLogged = dados.filter((u) => u.email == email && u.senha == senha);
-	console.log(isUserLogged);
+	const hasEmail = dados.filter(
+		(u) => u.email == email);
 
-	return isUserLogged[0];
+	if (hasEmail) {
+		const isUserLogged = hasEmail.filter(x => x.senha == senha)
+		if (isUserLogged.length > 0) return isUserLogged[0];
+		return "Senha incorreta."
+	}
+	return hasEmail;
 }
 
-function cadastrarUsuario(nome, email, senha) {
+async function cadastrarUsuario(nome, email, senha) {
 	const dados = load();
 	const user = {
 		nome,
 		email,
 		senha,
 	};
-	dados.push(user);
-	save(dados);
+	const isUserLogged = dados.filter((u) => u.email == email);
+	if (isUserLogged.length == 0) {
+		dados.push(user);
+		save(dados);
 
-	return autenticarUsuario(email, senha);
+		const emailASerEnviado = {
+			from: 'grangerstats@gmail.com',
+			to: email,
+			subject: 'Cadastro efetuado com sucesso',
+			html: `<h3>Olá ${nome},</h3>
+			<p>Seja bem-vindo! Seu cadastro foi efetuado com sucesso.</p>
+			<p>Agora você já pode iniciar sua jornada no Granger.</p>
+
+			<p>Para acessá-lo basta utilizar <b>${email}</b> e senha feita no cadastro.</p>
+
+			<i>Alohomora!</i>
+		`,
+		};
+
+		await sendEmail(emailASerEnviado);
+		return autenticarUsuario(email, senha);
+	}
+	return "E-mail já cadastrado."
+}
+
+function sendEmail(emailASerEnviado) {
+	const remetente = createSendEmail()
+
+	return new Promise(function (resolve, reject) {
+		remetente.sendMail(emailASerEnviado, function (err, info) {
+			if (err) {
+				console.log(error);
+				reject(err);
+			} else {
+				console.log('Email enviado com sucesso.');
+				resolve(info);
+			}
+		});
+	});
 }
 
 function save(content) {
 	const contentString = JSON.stringify(content);
 	return fs.writeFileSync("login.txt", contentString);
 }
+
 function load() {
 	const fileBuffer = fs.readFileSync("login.txt", "utf-8");
 	const json = JSON.parse(fileBuffer);
 	return json;
+}
+
+function createSendEmail() {
+	return nodemailer.createTransport({
+		// host: 'smtp.gmail.com',
+		service: 'gmail',
+		// port: 587,
+		// secure: true,
+		auth: {
+			user: 'grangerstats@gmail.com',
+			pass: 'hermione20'
+		}
+	});
 }
 
 module.exports = {

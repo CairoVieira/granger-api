@@ -214,7 +214,7 @@ app.post("/descritiva", (req, res) => {
 
 app.post("/probabilidade/binomial", (req, res) => {
 	let body = req.body;
-	let resultado = distribuicaoBinomial(Number(body.n), Number(body.p), Number(body.q), Number(body.k), body.tipo);
+	let resultado = distribuicaoBinomial(Number(body.n), Number(body.p), Number(body.q), body.k);
 	let media = mediaBinomial(Number(body.n), Number(body.p));
 	let desvio = desvioPadraoBinomial(Number(body.n), Number(body.p), Number(body.q));
 	let coeficiente = coeficienteVariacaoBinomial(desvio, media);
@@ -284,12 +284,12 @@ app.post("/login", (req, res) => {
 	else res.send(usuario);
 });
 
-app.post("/cadastrar", (req, res) => {
+app.post("/cadastrar", async (req, res) => {
 	const email = req.body.email;
 	const senha = req.body.senha;
 	const nome = req.body.nome;
 
-	const usuario = cadastrarUsuario(nome, email, senha);
+	const usuario = await cadastrarUsuario(nome, email, senha);
 	if (!usuario) res.send("Usuário não cadstrado!");
 	else res.send(usuario);
 });
