@@ -1,5 +1,6 @@
 const tabelaZ = require("./z-score-table.js");
 const fs = require("fs");
+var CryptoJS = require("crypto-js");
 const nodemailer = require('nodemailer');
 
 function troca(vet, i, j) {
@@ -184,7 +185,7 @@ function fatorial(numero) {
 
 function analiseCombinatoria(n, k) {
 	if (k == 0) return 1;
-	return Number( (fatorial(n) / (fatorial(n - k) * fatorial(k)) .toFixed(2)) );
+	return Number((fatorial(n) / (fatorial(n - k) * fatorial(k)).toFixed(2)));
 }
 
 function distribuicaoBinomial(n, p, q, k, tipo) {
@@ -362,12 +363,12 @@ function autenticarUsuario(email, senha) {
 	const hasEmail = dados.filter(
 		(u) => u.email == email);
 
-	if (hasEmail) {
+	if (hasEmail.length > 0) {
 		const isUserLogged = hasEmail.filter(x => x.senha == senha)
 		if (isUserLogged.length > 0) return isUserLogged[0];
 		return "Senha incorreta."
 	}
-	return hasEmail;
+	return hasEmail.length > 0;
 }
 
 async function cadastrarUsuario(nome, email, senha) {
@@ -431,16 +432,74 @@ function load() {
 
 function createSendEmail() {
 	return nodemailer.createTransport({
-		// host: 'smtp.gmail.com',
 		service: 'gmail',
-		// port: 587,
-		// secure: true,
 		auth: {
 			user: 'grangerstats@gmail.com',
 			pass: 'hermione20'
 		}
 	});
 }
+
+async function recuperarSenha(email) {
+	const dados = load();
+	const hasEmail = dados.filter(
+		(u) => u.email == email);
+
+	if (hasEmail.length > 0) {
+		const remetente = createSendEmail();
+
+		const emailCript = criptografar(email)
+
+		const emailASerEnviado = {
+			from: 'grangerstats@gmail.com',
+			to: email,
+			subject: 'Recuperação de Senha',
+			html: `<h3>Olá,</h3>
+			<p>Para recuperar seu acesso será necessário cadastrar uma nova senha.</p>
+			<p>Acesse o link abaixo para trocar sua senha.</p>
+
+			<p>https://grangerapi-com.umbler.net/esqueci-senha?e=${emailCript}</p>
+
+			<i>Alohomora!</i>
+		`,
+		};
+		await sendEmail(emailASerEnviado);
+		return { mensagem: "E-mail de recuperação de senha foi enviado!" }
+	}
+	return "E-mail não cadastrado."
+}
+
+async function alterarSenha(email, senha) {
+	const dados = load();
+	const hasUser = dados.filter(
+		(u) => u.email == email);
+
+	if (hasUser.length > 0) {
+		const user = {
+			nome: hasUser[0].nome,
+			email: hasUser[0].email,
+			senha: descriptografar(senha),
+		};
+		const newList = dados.filter(
+			(u) => u.email != email);
+		newList.push(user);
+		save(newList);
+		return { mensagem: "Senha cadastrada com sucesso!" }
+	}
+	return "E-mail não cadastrado."
+}
+
+function criptografar(text) {
+	return CryptoJS.AES.encrypt(JSON.stringify(text), 'secret key 123').toString();
+
+};
+
+function descriptografar(senha) {
+	var bytes = CryptoJS.AES.decrypt(senha, 'secret key 123');
+	var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+	return decryptedData
+};
 
 module.exports = {
 	quickSort,
@@ -464,4 +523,6 @@ module.exports = {
 	tipoCorrelacao,
 	autenticarUsuario,
 	cadastrarUsuario,
+	recuperarSenha,
+	alterarSenha
 };

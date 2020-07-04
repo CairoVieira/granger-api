@@ -1,1 +1,1 @@
-[{"nome":"Cairo","email":"vieira.cairo@hotmail.com","senha":"123456"}]
+[{"nome":"Cairo","email":"vieira.cairo@hotmail.com","senha":"123456"},{"nome":"THALLES ALEXANDRE TERRA","email":"thallesterra@gmail.com","senha":"123456"}]
