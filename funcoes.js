@@ -572,7 +572,7 @@ async function recuperarSenha(email) {
 			<p>Para recuperar seu acesso será necessário cadastrar uma nova senha.</p>
 			<p>Acesse o link abaixo para trocar sua senha.</p>
 
-			<p>https://grangerapi-com.umbler.net/esqueci-senha?e=${emailCript}</p>
+			<p>http://granger-stats-com.umbler.net/esqueci-senha?e=${emailCript}</p>
 
 			<i>Alohomora!</i>
 		`,
