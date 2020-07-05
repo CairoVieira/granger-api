@@ -507,7 +507,7 @@ function sendEmail(emailASerEnviado) {
 		return new Promise(function (resolve, reject) {
 			remetente.sendMail(emailASerEnviado, function (err, info) {
 				if (err) {
-					console.log(error);
+					console.log(err);
 					reject(err);
 				} else {
 					console.log('Email enviado com sucesso.');
