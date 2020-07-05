@@ -1,6 +1,6 @@
-var express = require("express");
-var cors = require("cors");
-var app = express();
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require('body-parser');
 var {
 	quickSort,
 	media,
@@ -25,8 +25,11 @@ var {
 	alterarSenha
 } = require("./funcoes");
 
+const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+// app.use(express.json());
 
 app.get("/health", (req, res) => {
 	res.send("API Granger Online");
@@ -232,6 +235,7 @@ app.post("/descritiva", (req, res) => {
 				**/
 			}
 		}
+		res.send(json);
 	} catch (error) {
 		res.send(error.toString());
 	}
