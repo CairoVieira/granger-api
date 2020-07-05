@@ -33,40 +33,60 @@ app.get("/health", (req, res) => {
 });
 
 app.post("/mediana", (req, res) => {
-	let body = req.body;
-	let resultado = "";
-	resultado = mediana(body.tipo, body.dados);
-	res.send(resultado.toString());
+	try {
+		let body = req.body;
+		let resultado = "";
+		resultado = mediana(body.tipo, body.dados);
+		res.send(resultado.toString());
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/quartil/:id", (req, res) => {
-	let body = req.body;
-	let quartil = Number(req.params.id);
-	console.log("1.0", body, quartil);
-	const resultado = medidasSeparatriz(body.tipo, body.dados, 4, quartil);
-	console.log("1.1", resultado);
-	res.send(resultado.toString());
+	try {
+		let body = req.body;
+		let quartil = Number(req.params.id);
+		console.log("1.0", body, quartil);
+		const resultado = medidasSeparatriz(body.tipo, body.dados, 4, quartil);
+		console.log("1.1", resultado);
+		res.send(resultado.toString());
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/quintil/:id", (req, res) => {
-	let body = req.body;
-	let quintil = Number(req.params.id);
-	const resultado = medidasSeparatriz(body.tipo, body.dados, 5, quintil);
-	res.send(resultado.toString());
+	try {
+		let body = req.body;
+		let quintil = Number(req.params.id);
+		const resultado = medidasSeparatriz(body.tipo, body.dados, 5, quintil);
+		res.send(resultado.toString());
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/decil/:id", (req, res) => {
-	let body = req.body;
-	let decil = Number(req.params.id);
-	const resultado = medidasSeparatriz(body.tipo, body.dados, 10, decil);
-	res.send(resultado.toString());
+	try {
+		let body = req.body;
+		let decil = Number(req.params.id);
+		const resultado = medidasSeparatriz(body.tipo, body.dados, 10, decil);
+		res.send(resultado.toString());
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/porcentil/:id", (req, res) => {
-	let body = req.body;
-	let porcentil = Number(req.params.id);
-	const resultado = medidasSeparatriz(body.tipo, body.dados, 100, porcentil);
-	res.send(resultado.toString());
+	try {
+		let body = req.body;
+		let porcentil = Number(req.params.id);
+		const resultado = medidasSeparatriz(body.tipo, body.dados, 100, porcentil);
+		res.send(resultado.toString());
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/descritiva", (req, res) => {
@@ -212,104 +232,130 @@ app.post("/descritiva", (req, res) => {
 				**/
 			}
 		}
-
-
 	} catch (error) {
-		res.send(error);
+		res.send(error.toString());
 	}
 
 });
 
 app.post("/probabilidade/binomial", (req, res) => {
-	let body = req.body;
-	let resultado = distribuicaoBinomial(Number(body.n), Number(body.p), Number(body.q), body.k);
-	let media = mediaBinomial(Number(body.n), Number(body.p));
-	let desvio = desvioPadraoBinomial(Number(body.n), Number(body.p), Number(body.q));
-	let coeficiente = coeficienteVariacaoBinomial(desvio, media);
-	let json = {
-		dados: {
-			resultado,
-			media,
-			desvio,
-			coeficiente,
-		},
-	};
-	res.send(json);
+	try {
+		let body = req.body;
+		let resultado = distribuicaoBinomial(Number(body.n), Number(body.p), Number(body.q), body.k);
+		let media = mediaBinomial(Number(body.n), Number(body.p));
+		let desvio = desvioPadraoBinomial(Number(body.n), Number(body.p), Number(body.q));
+		let coeficiente = coeficienteVariacaoBinomial(desvio, media);
+		let json = {
+			dados: {
+				resultado,
+				media,
+				desvio,
+				coeficiente,
+			},
+		};
+		res.send(json);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/probabilidade/normal", (req, res) => {
-	let body = req.body;
-	let resultado = distribuicaoNormal(Number(body.media), Number(body.desvio), Number(body.valor), body.intervalo, Number(body.de), Number(body.para));
-	let json = {
-		dados: {
-			resultado,
-		},
-	};
-	res.send(json);
+	try {
+		let body = req.body;
+		let resultado = distribuicaoNormal(Number(body.media), Number(body.desvio), Number(body.valor), body.intervalo, Number(body.de), Number(body.para));
+		let json = {
+			dados: {
+				resultado,
+			},
+		};
+		res.send(json);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/probabilidade/uniforme", (req, res) => {
-	let body = req.body;
-	const resultado = distribuicaoUniforme(Number(body.minimo), Number(body.maximo), Number(body.valor), body.intervalo, Number(body.de), Number(body.ate));
-	const media = ((Number(body.minimo) + Number(body.maximo)) / 2).toFixed(2);
-	const desvio = desvioPadraoUniforme(Number(body.minimo), Number(body.maximo));
-	const coeficiente = ((desvio / media) * 100).toFixed(2);
-	let json = {
-		dados: {
-			resultado,
-			media,
-			desvio,
-			coeficiente,
-		},
-	};
-	res.send(json);
+	try {
+		let body = req.body;
+		const resultado = distribuicaoUniforme(Number(body.minimo), Number(body.maximo), Number(body.valor), body.intervalo, Number(body.de), Number(body.ate));
+		const media = ((Number(body.minimo) + Number(body.maximo)) / 2).toFixed(2);
+		const desvio = desvioPadraoUniforme(Number(body.minimo), Number(body.maximo));
+		const coeficiente = ((desvio / media) * 100).toFixed(2);
+		let json = {
+			dados: {
+				resultado,
+				media,
+				desvio,
+				coeficiente,
+			},
+		};
+		res.send(json);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/correlacao", (req, res) => {
-	const x = req.body.x.split(";");
-	const y = req.body.y.split(";");
-	const correlacaoResultado = correlacao(x, y);
-	const tipo = tipoCorrelacao(correlacaoResultado);
-	const regressaoResultado = regressao(x, y);
-	const dadosGrafico = correlacaoGrafico(x, y, regressaoResultado);
-	const json = {
-		dados: {
-			correlacaoResultado,
-			dadosGrafico,
-			regressaoResultado,
-			tipo,
-		},
-	};
-	res.send(json);
+	try {
+		const x = req.body.x.split(";");
+		const y = req.body.y.split(";");
+		const correlacaoResultado = correlacao(x, y);
+		const tipo = tipoCorrelacao(correlacaoResultado);
+		const regressaoResultado = regressao(x, y);
+		const dadosGrafico = correlacaoGrafico(x, y, regressaoResultado);
+		const json = {
+			dados: {
+				correlacaoResultado,
+				dadosGrafico,
+				regressaoResultado,
+				tipo,
+			},
+		};
+		res.send(json);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/login", async (req, res) => {
-	const email = req.body.email;
-	const senha = req.body.senha;
+	try {
+		const email = req.body.email;
+		const senha = req.body.senha;
 
-	const usuario = autenticarUsuario(email, senha);
-	if (!usuario) res.send("Usuário não cadstrado!");
-	else res.send(usuario);
+		const usuario = autenticarUsuario(email, senha);
+		if (!usuario) res.send("Usuário não cadstrado!");
+		else res.send(usuario);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/cadastrar", async (req, res) => {
-	const email = req.body.email;
-	const senha = req.body.senha;
-	const nome = req.body.nome;
+	try {
+		const email = req.body.email;
+		const senha = req.body.senha;
+		const nome = req.body.nome;
 
-	const usuario = await cadastrarUsuario(nome, email, senha);
-	if (!usuario) res.send("Usuário não cadstrado!");
-	else res.send(usuario);
+		const usuario = await cadastrarUsuario(nome, email, senha);
+		if (!usuario) res.send("Usuário não cadstrado!");
+		else res.send(usuario);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 app.post("/esqueci-senha", async (req, res) => {
-	const email = req.body.email;
-	const senha = req.body.senha;
-	let resultado;
-	if (senha) resultado = await alterarSenha(email, senha);
-	if (email && !senha) resultado = await recuperarSenha(email);
+	try {
+		const email = req.body.email;
+		const senha = req.body.senha;
+		let resultado;
+		if (senha) resultado = await alterarSenha(email, senha);
+		if (email && !senha) resultado = await recuperarSenha(email);
 
-	res.send(resultado);
+		res.send(resultado);
+	} catch (error) {
+		res.send(error.toString());
+	}
 });
 
 var port = process.env.PORT || 3001;
