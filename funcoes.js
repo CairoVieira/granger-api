@@ -281,113 +281,134 @@ function desvioPadraoUniforme(minimo, maximo) {
 }
 
 function correlacao(x, y) {
-	let somatorioX = 0;
-	let somatorioY = 0;
-	let somatorioXY = 0;
-	let somatorioX2 = 0;
-	let somatorioY2 = 0;
+	try {
+		let somatorioX = 0;
+		let somatorioY = 0;
+		let somatorioXY = 0;
+		let somatorioX2 = 0;
+		let somatorioY2 = 0;
 
-	for (let i = 0; i < x.length; i++) {
-		const elementX = Number(x[i]);
-		const elementY = Number(y[i]);
+		for (let i = 0; i < x.length; i++) {
+			const elementX = Number(x[i]);
+			const elementY = Number(y[i]);
 
-		somatorioX += elementX;
-		somatorioY += elementY;
-		somatorioXY += elementX * elementY;
-		somatorioX2 += elementX * elementX;
-		somatorioY2 += elementY * elementY;
+			somatorioX += elementX;
+			somatorioY += elementY;
+			somatorioXY += elementX * elementY;
+			somatorioX2 += elementX * elementX;
+			somatorioY2 += elementY * elementY;
+		}
+		const n = x.length;
+		const divisor = n * somatorioXY - somatorioX * somatorioY;
+		const dividendo = Math.sqrt(n * somatorioX2 - Math.pow(somatorioX, 2)) * Math.sqrt(n * somatorioY2 - Math.pow(somatorioY, 2));
+		const resultado = divisor / dividendo;
+		return (resultado * 100).toFixed(2);
+	} catch (error) {
+		console.log("error", error)
 	}
-	const n = x.length;
-	const divisor = n * somatorioXY - somatorioX * somatorioY;
-	const dividendo = Math.sqrt(n * somatorioX2 - Math.pow(somatorioX, 2)) * Math.sqrt(n * somatorioY2 - Math.pow(somatorioY, 2));
-	const resultado = divisor / dividendo;
-	return (resultado * 100).toFixed(2);
 }
 
 function regressao(x, y) {
-	let somatorioX = 0;
-	let somatorioY = 0;
-	let somatorioXY = 0;
-	let somatorioX2 = 0;
-	let somatorioY2 = 0;
+	try {
+		let somatorioX = 0;
+		let somatorioY = 0;
+		let somatorioXY = 0;
+		let somatorioX2 = 0;
+		let somatorioY2 = 0;
 
-	for (let i = 0; i < x.length; i++) {
-		const elementX = Number(x[i]);
-		const elementY = Number(y[i]);
+		for (let i = 0; i < x.length; i++) {
+			const elementX = Number(x[i]);
+			const elementY = Number(y[i]);
 
-		somatorioX += elementX;
-		somatorioY += elementY;
-		somatorioXY += elementX * elementY;
-		somatorioX2 += elementX * elementX;
-		somatorioY2 += elementY * elementY;
+			somatorioX += elementX;
+			somatorioY += elementY;
+			somatorioXY += elementX * elementY;
+			somatorioX2 += elementX * elementX;
+			somatorioY2 += elementY * elementY;
+		}
+
+		const n = x.length;
+		const divisor = n * somatorioXY - somatorioX * somatorioY;
+		const dividendo = n * somatorioX2 - Math.pow(somatorioX, 2);
+		const a = (divisor / dividendo).toFixed(2);
+		const b = (somatorioY / n - a * (somatorioX / n)).toFixed(2);
+		return { a, b };
+	} catch (error) {
+		console.log("error", error)
 	}
-
-	const n = x.length;
-	const divisor = n * somatorioXY - somatorioX * somatorioY;
-	const dividendo = n * somatorioX2 - Math.pow(somatorioX, 2);
-	const a = (divisor / dividendo).toFixed(2);
-	const b = (somatorioY / n - a * (somatorioX / n)).toFixed(2);
-	return { a, b };
 }
 
 function correlacaoGrafico(x, y, regressao) {
-	let resultado = [];
+	try {
+		let resultado = [];
 
-	for (let i = 0; i < x.length; i++) {
-		const elementX = Number(x[i]);
-		const elementY = Number(y[i]);
+		for (let i = 0; i < x.length; i++) {
+			const elementX = Number(x[i]);
+			const elementY = Number(y[i]);
 
-		let item = {
-			x: elementX,
-			y: elementY,
-		};
-		if (i == 0 || i == x.length - 1) {
-			const linha = Number(regressao.a) * elementX + Number(regressao.b);
-			item.l = linha;
+			let item = {
+				x: elementX,
+				y: elementY,
+			};
+			if (i == 0 || i == x.length - 1) {
+				const linha = Number(regressao.a) * elementX + Number(regressao.b);
+				item.l = linha;
+			}
+			resultado.push(item);
 		}
-		resultado.push(item);
+		return resultado;
+	} catch (error) {
+		console.log("error", error)
 	}
-	return resultado;
 }
 
 function tipoCorrelacao(correlacao) {
-	if (Number(correlacao) == 0) return "Variáveis não correlacionadas";
-	if (Number(correlacao) <= 30) return "Fraca";
-	if (Number(correlacao) <= 70 && Number(correlacao) > 30) return "Moderada";
-	if (Number(correlacao) == 100) return "Perfeita";
-	return "Forte";
+	try {
+		if (Number(correlacao) == 0) return "Variáveis não correlacionadas";
+		if (Number(correlacao) <= 30) return "Fraca";
+		if (Number(correlacao) <= 70 && Number(correlacao) > 30) return "Moderada";
+		if (Number(correlacao) == 100) return "Perfeita";
+		return "Forte";
+	} catch (error) {
+		console.log("error", error)
+	}
 }
 
 function autenticarUsuario(email, senha) {
-	const dados = load();
-	const hasEmail = dados.filter(
-		(u) => u.email == email);
+	try {
+		const dados = load();
+		const hasEmail = dados.filter(
+			(u) => u.email == email);
 
-	if (hasEmail.length > 0) {
-		const isUserLogged = hasEmail.filter(x => x.senha == senha)
-		if (isUserLogged.length > 0) return isUserLogged[0];
-		return "Senha incorreta."
+		if (hasEmail.length > 0) {
+			const isUserLogged = hasEmail.filter(x => x.senha == senha)
+			if (isUserLogged.length > 0) return isUserLogged[0];
+			return "Senha incorreta."
+		}
+		return hasEmail.length > 0;
+	} catch (error) {
+		console.log("error", error)
 	}
-	return hasEmail.length > 0;
 }
 
 async function cadastrarUsuario(nome, email, senha) {
-	const dados = load();
-	const user = {
-		nome,
-		email,
-		senha,
-	};
-	const isUserLogged = dados.filter((u) => u.email == email);
-	if (isUserLogged.length == 0) {
-		dados.push(user);
-		save(dados);
+	try {
+		const dados = load();
+		const user = {
+			nome,
+			email,
+			senha,
+		};
+		const isUserLogged = dados.filter((u) => u.email == email);
+		if (isUserLogged.length == 0) {
+			dados.push(user);
+			save(dados);
 
-		const emailASerEnviado = {
-			from: 'grangerstats@gmail.com',
-			to: email,
-			subject: 'Cadastro efetuado com sucesso',
-			html: `<h3>Olá ${nome},</h3>
+			const emailASerEnviado = {
+				from: 'grangerstats@gmail.com',
+				to: email,
+				subject: 'Cadastro efetuado com sucesso',
+				html: `<h3>Olá ${nome},</h3>
 			<p>Seja bem-vindo! Seu cadastro foi efetuado com sucesso.</p>
 			<p>Agora você já pode iniciar sua jornada no Granger.</p>
 
@@ -395,66 +416,86 @@ async function cadastrarUsuario(nome, email, senha) {
 
 			<i>Alohomora!</i>
 		`,
-		};
+			};
 
-		await sendEmail(emailASerEnviado);
-		return autenticarUsuario(email, senha);
+			await sendEmail(emailASerEnviado);
+			return autenticarUsuario(email, senha);
+		}
+		return "E-mail já cadastrado."
+	} catch (error) {
+		console.log("error", error)
 	}
-	return "E-mail já cadastrado."
 }
 
 function sendEmail(emailASerEnviado) {
-	const remetente = createSendEmail()
+	try {
+		const remetente = createSendEmail()
 
-	return new Promise(function (resolve, reject) {
-		remetente.sendMail(emailASerEnviado, function (err, info) {
-			if (err) {
-				console.log(error);
-				reject(err);
-			} else {
-				console.log('Email enviado com sucesso.');
-				resolve(info);
-			}
+		return new Promise(function (resolve, reject) {
+			remetente.sendMail(emailASerEnviado, function (err, info) {
+				if (err) {
+					console.log(error);
+					reject(err);
+				} else {
+					console.log('Email enviado com sucesso.');
+					resolve(info);
+				}
+			});
 		});
-	});
+	} catch (error) {
+		console.log("error", error)
+	}
 }
 
 function save(content) {
-	const contentString = JSON.stringify(content);
-	return fs.writeFileSync("login.txt", contentString);
+	try {
+		const contentString = JSON.stringify(content);
+		return fs.writeFileSync("login.txt", contentString);
+	} catch (error) {
+		console.log("error", error)
+	}
 }
 
 function load() {
-	const fileBuffer = fs.readFileSync("login.txt", "utf-8");
-	const json = JSON.parse(fileBuffer);
-	return json;
+	try {
+		const fileBuffer = fs.readFileSync("login.txt", "utf-8");
+		const json = JSON.parse(fileBuffer);
+		return json;
+	} catch (error) {
+		console.log("error", error)
+	}
 }
 
 function createSendEmail() {
-	return nodemailer.createTransport({
-		service: 'gmail',
-		auth: {
-			user: 'grangerstats@gmail.com',
-			pass: 'hermione20'
-		}
-	});
+	try {
+		return nodemailer.createTransport({
+			service: 'gmail',
+			auth: {
+				user: 'grangerstats@gmail.com',
+				pass: 'hermione20'
+			}
+		});
+	} catch (error) {
+		console.log("error", error)
+	}
 }
 
 async function recuperarSenha(email) {
-	const dados = load();
-	const hasEmail = dados.filter(
-		(u) => u.email == email);
+	try {
+		const dados = load();
+		const hasEmail = dados.filter(
+			(u) => u.email == email);
 
-	if (hasEmail.length > 0) {
-		const remetente = createSendEmail();
+		if (hasEmail.length > 0) {
+			const remetente = createSendEmail();
 
-		const emailCript = criptografar(email)
+			const emailCript = criptografar(email)
 
-		const emailASerEnviado = {
-			from: 'grangerstats@gmail.com',
-			to: email,
-			subject: 'Recuperação de Senha',
-			html: `<h3>Olá,</h3>
+			const emailASerEnviado = {
+				from: 'grangerstats@gmail.com',
+				to: email,
+				subject: 'Recuperação de Senha',
+				html: `<h3>Olá,</h3>
 			<p>Para recuperar seu acesso será necessário cadastrar uma nova senha.</p>
 			<p>Acesse o link abaixo para trocar sua senha.</p>
 
@@ -462,43 +503,58 @@ async function recuperarSenha(email) {
 
 			<i>Alohomora!</i>
 		`,
-		};
-		await sendEmail(emailASerEnviado);
-		return { mensagem: "E-mail de recuperação de senha foi enviado!" }
+			};
+			await sendEmail(emailASerEnviado);
+			return { mensagem: "E-mail de recuperação de senha foi enviado!" }
+		}
+		return "E-mail não cadastrado."
+	} catch (error) {
+		console.log("error", error)
 	}
-	return "E-mail não cadastrado."
 }
 
 async function alterarSenha(email, senha) {
-	const dados = load();
-	const hasUser = dados.filter(
-		(u) => u.email == email);
+	try {
+		const dados = load();
+		const hasUser = dados.filter(
+			(u) => u.email == email);
 
-	if (hasUser.length > 0) {
-		const user = {
-			nome: hasUser[0].nome,
-			email: hasUser[0].email,
-			senha: descriptografar(senha),
-		};
-		const newList = dados.filter(
-			(u) => u.email != email);
-		newList.push(user);
-		save(newList);
-		return { mensagem: "Senha cadastrada com sucesso!" }
+		if (hasUser.length > 0) {
+			const user = {
+				nome: hasUser[0].nome,
+				email: hasUser[0].email,
+				senha: descriptografar(senha),
+			};
+			const newList = dados.filter(
+				(u) => u.email != email);
+			newList.push(user);
+			save(newList);
+			return { mensagem: "Senha cadastrada com sucesso!" }
+		}
+		return "E-mail não cadastrado."
+	} catch (error) {
+		console.log("error", error)
 	}
-	return "E-mail não cadastrado."
 }
 
 function criptografar(text) {
-	return CryptoJS.AES.encrypt(JSON.stringify(text), 'secret key 123').toString();
-
+	try {
+		return CryptoJS.AES.encrypt(JSON.stringify(text), 'secret key 123').toString();
+	} catch (error) {
+		console.log("error", error)
+	}
 };
 
 function descriptografar(senha) {
-	var bytes = CryptoJS.AES.decrypt(senha, 'secret key 123');
-	var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+	try {
+		var bytes = CryptoJS.AES.decrypt(senha, 'secret key 123');
+		var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-	return decryptedData
+		return decryptedData
+	} catch (error) {
+		console.log("error", error)
+	}
+
 };
 
 module.exports = {
